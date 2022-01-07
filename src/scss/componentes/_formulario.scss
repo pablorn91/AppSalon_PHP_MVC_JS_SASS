@@ -1,0 +1,21 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+.formulario {
+    width: 100%;
+}
+
+.campo {
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    label {
+        flex: 0 0 10rem
+    }
+    input {
+        flex-grow: 1;
+        border: none;
+        padding: calc(v.$separacion / 4);
+        border-radius: .5rem;
+    }
+}
