@@ -40,12 +40,12 @@
     </div>
     
     <div class="campo">
-        <label for="email">E-mail</label>
+        <label for="email">Email</label>
         <input 
         type="email" 
         id="email" 
         name="email" 
-        placeholder="Tu E-mail"
+        placeholder="Tu Email"
         value="<?php echo s($usuario->email); ?>"
         />
     </div>
