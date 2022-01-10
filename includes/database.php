@@ -1,6 +1,7 @@
 <?php
 
 $db = mysqli_connect('localhost', 'root', '', 'appsalon_mvc');
+mysqli_set_charset($db, 'utf8');
 
 
 if (!$db) {
