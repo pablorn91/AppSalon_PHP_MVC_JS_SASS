@@ -3,6 +3,7 @@ const pasoInicial = 1;
 const pasoFinal = 3;
 
 const cita = {
+    id: '',
     nombre: '',
     fecha:'',
     hora:'',
@@ -22,6 +23,7 @@ function iniciarApp() {
 
     consultarAPI(); //Consultar la API en el backend de PHP
 
+    idCliente(); //Añade el nombre del Cliente al Objeto de cita
     nombreCliente(); //Añade el nombre del Cliente al Objeto de cita
     seleccionarFecha(); //Añade la fecha de cita al Objeto de cita
     seleccionarHora(); //Añade la hora de cita al Objeto de cita
@@ -171,6 +173,10 @@ function seleccionarServicio (servicio) {
     divServicio.classList.toggle('seleccionado');
 }
 
+
+function idCliente(){
+    cita.id = document.querySelector('#id').value;
+}
 function nombreCliente(){
     cita.nombre = document.querySelector('#nombre').value;
 }
@@ -185,6 +191,7 @@ function seleccionarFecha(){
         //Comprobar Si el dia seleccionado no es ni Domingo ni Sábado
         if([0,6].includes(dia)) {
             e.target.value = '';
+            cita.fecha = '';
             mostrarAlerta('No trabajamos Domingo y Sábado', 'error', '.formulario');
         } else {
             cita.fecha = inputFecha.value;
@@ -200,6 +207,7 @@ function seleccionarHora() {
         const hora = horaCita.split(":")[0];
         if ( hora < 10 || hora >18) {
             e.target.value = '';
+            cita.hora = '';
             mostrarAlerta('Hora no Válida', 'error', '.formulario');
         } else {
             cita.hora = e.target.value;
@@ -290,18 +298,75 @@ function mostrarResumen() {
     const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const fechaUTC = new Date( Date.UTC( year, mes, dia ) );
     const fechaFormateada = fechaUTC.toLocaleDateString('es-ES', opciones);
-    console.log(fechaFormateada);
+    // console.log(fechaFormateada);
     
     const fechaCita = document.createElement('P');
     fechaCita.innerHTML = `<span>Fecha:</span> ${fechaFormateada}`;
     
     const horaCita = document.createElement('P');
     horaCita.innerHTML = `<span>Hora:</span> ${hora} Horas`;
+    
+    //Botón para crear una cita
+    const botonReservar = document.createElement('BUTTON');
+    botonReservar.classList.add('boton');
+    botonReservar.textContent = 'Reservar Cita';
+    botonReservar.onclick = reservarCita;
 
     resumen.appendChild(nombreCliente);
     resumen.appendChild(fechaCita);
     resumen.appendChild(horaCita);
+
+    resumen.appendChild(botonReservar);
     
-    console.log(nombreCliente);
 }
 
+async function reservarCita () {
+
+    const { id, fecha, hora, servicios } = cita;
+
+    const idServicios = servicios.map( servicio => servicio.id );
+
+    const datos = new FormData();
+    datos.append('fecha', fecha);
+    datos.append('hora', hora);
+    datos.append('usuarioId', id);
+    datos.append('servicios', idServicios);
+    
+    // console.log([...datos]);
+
+    try {
+        
+        //Petición hacia la API
+        const url = 'http://appsalon_php_mvc_js_sass.test/api/citas';
+    
+        const respuesta = await fetch(url, {
+            method: 'POST',
+            body: datos
+        });
+    
+        resultado = await respuesta.json();
+    
+        console.log(resultado);
+    
+        if(resultado.resultado) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Cita Creada',
+                text: 'Tu cita fue creada correctamente',
+                button: 'OK'
+              }).then( ()=>{
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 2000);
+              });
+        }
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un error al guardar la cita',
+          }) 
+    }
+
+    
+}
