@@ -20,5 +20,22 @@
         width: 95%;
         margin:  0 auto;
         padding: 3rem 0;
+        @include m.tablet {
+            overflow: scroll;
+        }
+    }
+}
+.barra {
+    margin: v.$separacion 0;
+
+    @include m.tablet {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .boton {
+        @include m.boton(v.$negro, v.$blanco);
+        margin: 0;
     }
 }
