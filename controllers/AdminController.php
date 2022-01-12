@@ -11,6 +11,8 @@ class AdminController {
         if(!isset($_SESSION)) {
             session_start();
         }
+
+        isAdmin();
         
         $fecha = $_GET['fecha'] ?? date('Y-m-d');
 
